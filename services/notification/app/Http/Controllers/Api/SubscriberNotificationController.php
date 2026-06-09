@@ -20,9 +20,9 @@ class SubscriberNotificationController extends Controller
     public function index(string $subscriberId, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'status' => ['sometimes', Rule::enum(NotificationStatus::class)],
-            'channel' => ['sometimes', Rule::enum(NotificationChannel::class)],
-            'page' => ['sometimes', 'integer', 'min:1'],
+            'status'   => ['sometimes', Rule::enum(NotificationStatus::class)],
+            'channel'  => ['sometimes', Rule::enum(NotificationChannel::class)],
+            'page'     => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
@@ -42,13 +42,13 @@ class SubscriberNotificationController extends Controller
 
         return response()->json([
             'data' => collect($paginator->items())
-                ->map(fn ($n) => $this->notificationService->formatNotification($n))
+                ->map(fn($n) => $this->notificationService->formatNotification($n))
                 ->values(),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
+                'last_page'    => $paginator->lastPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
             ],
         ]);
     }

@@ -90,11 +90,11 @@ class NotificationService
     ): ?Notification {
         try {
             return Notification::query()->create([
-                'subscriber_id' => $subscriberId,
-                'channel' => $channel,
-                'message' => $message,
-                'priority' => $priority,
-                'status' => NotificationStatus::Queued,
+                'subscriber_id'   => $subscriberId,
+                'channel'         => $channel,
+                'message'         => $message,
+                'priority'        => $priority,
+                'status'          => NotificationStatus::Queued,
                 'idempotency_key' => $idempotencyKey,
             ]);
         } catch (QueryException $e) {
@@ -149,18 +149,18 @@ class NotificationService
     public function formatNotification(Notification $notification): array
     {
         return [
-            'id' => $notification->id,
+            'id'            => $notification->id,
             'subscriber_id' => $notification->subscriber_id,
-            'channel' => $notification->channel->value,
-            'message' => $notification->message,
-            'status' => $notification->status->value,
-            'priority' => $notification->priority->value,
-            'provider_ref' => $notification->provider_ref,
+            'channel'       => $notification->channel->value,
+            'message'       => $notification->message,
+            'status'        => $notification->status->value,
+            'priority'      => $notification->priority->value,
+            'provider_ref'  => $notification->provider_ref,
             'error_message' => $notification->error_message,
-            'attempts' => $notification->attempts,
-            'created_at' => $notification->created_at?->toIso8601String(),
-            'sent_at' => $notification->sent_at?->toIso8601String(),
-            'delivered_at' => $notification->delivered_at?->toIso8601String(),
+            'attempts'      => $notification->attempts,
+            'created_at'    => $notification->created_at?->toIso8601String(),
+            'sent_at'       => $notification->sent_at?->toIso8601String(),
+            'delivered_at'  => $notification->delivered_at?->toIso8601String(),
         ];
     }
 }
