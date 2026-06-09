@@ -16,6 +16,7 @@ class NotificationService
 
     public function __construct(
         private readonly IdempotencyService $idempotencyService,
+        private readonly SubscriberRateLimitService $subscriberRateLimitService,
     ) {
     }
 
@@ -50,9 +51,13 @@ class NotificationService
             }
         }
 
+        $this->subscriberRateLimitService->assertRecipientsAllowed($recipientIds, $channel);
+
         $notifications = collect();
 
         foreach ($recipientIds as $subscriberId) {
+            $this->subscriberRateLimitService->recordSend($subscriberId, $channel);
+
             $notification = $this->createNotification(
                 $channel,
                 $message,

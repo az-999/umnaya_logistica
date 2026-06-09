@@ -1,8 +1,10 @@
 <?php
 
+use App\Exceptions\SubscriberRateLimitExceededException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,5 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (SubscriberRateLimitExceededException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'subscriber_ids' => $e->subscriberIds,
+                ], 429)->header('Retry-After', $e->retryAfterSeconds);
+            }
+        });
     })->create();
