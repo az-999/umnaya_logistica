@@ -17,11 +17,11 @@ class BulkNotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'channel' => ['required', Rule::enum(NotificationChannel::class)],
-            'message' => ['required', 'string', 'max:5000'],
-            'recipient_ids' => ['required', 'array', 'min:1', 'max:1000'],
+            'channel'         => ['required', Rule::enum(NotificationChannel::class)],
+            'message'         => ['required', 'string', 'max:5000'],
+            'recipient_ids'   => ['required', 'array', 'min:1', 'max:1000'],
             'recipient_ids.*' => ['required', 'string', 'max:255'],
-            'priority' => ['sometimes', Rule::enum(NotificationPriority::class)],
+            'priority'        => ['sometimes', Rule::enum(NotificationPriority::class)],
         ];
     }
 }

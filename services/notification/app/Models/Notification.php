@@ -33,10 +33,10 @@ class Notification extends Model
     protected function casts(): array
     {
         return [
-            'channel' => NotificationChannel::class,
-            'priority' => NotificationPriority::class,
-            'status' => NotificationStatus::class,
-            'sent_at' => 'datetime',
+            'channel'      => NotificationChannel::class,
+            'priority'     => NotificationPriority::class,
+            'status'       => NotificationStatus::class,
+            'sent_at'      => 'datetime',
             'delivered_at' => 'datetime',
         ];
     }

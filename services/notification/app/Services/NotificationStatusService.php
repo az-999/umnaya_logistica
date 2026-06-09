@@ -10,9 +10,9 @@ class NotificationStatusService
     public function markSent(Notification $notification, string $providerRef): void
     {
         $notification->update([
-            'status' => NotificationStatus::Sent,
-            'provider_ref' => $providerRef,
-            'sent_at' => now(),
+            'status'        => NotificationStatus::Sent,
+            'provider_ref'  => $providerRef,
+            'sent_at'       => now(),
             'error_message' => null,
         ]);
     }
@@ -20,7 +20,7 @@ class NotificationStatusService
     public function markRejected(Notification $notification, string $errorMessage): void
     {
         $notification->update([
-            'status' => NotificationStatus::Rejected,
+            'status'        => NotificationStatus::Rejected,
             'error_message' => $errorMessage,
         ]);
     }
@@ -28,7 +28,7 @@ class NotificationStatusService
     public function markDelivered(Notification $notification): void
     {
         $notification->update([
-            'status' => NotificationStatus::Delivered,
+            'status'       => NotificationStatus::Delivered,
             'delivered_at' => now(),
         ]);
     }
