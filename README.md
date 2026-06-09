@@ -128,6 +128,12 @@ sequenceDiagram
 - Redis: кэш ответа с `notification_ids` — повторный запрос возвращает **200** с теми же ID.
 - PostgreSQL: unique `(idempotency_key, subscriber_id)` — защита на уровне БД при гонках.
 
+**Rate limit (на подписчика):**
+
+- `SubscriberRateLimitService` + Laravel `RateLimiter`, счётчик в Redis.
+- Лимит по умолчанию: 10 уведомлений/час на пару `subscriber_id` + канал (`RATE_LIMIT_SUBSCRIBER_PER_HOUR`).
+- Идемпотентные повторы лимит не расходуют.
+
 **Доставка сообщений (at-least-once):**
 
 - Очередь RabbitMQ `notifications.marketing` — durable (драйвер `laravel-queue-rabbitmq`).

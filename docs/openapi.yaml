@@ -52,6 +52,8 @@ paths:
                 $ref: '#/components/schemas/BulkNotificationResponse'
         '422':
           description: Ошибка валидации
+        '429':
+          description: Превышен лимит уведомлений подписчику (RATE_LIMIT_SUBSCRIBER_PER_HOUR в час)
   /subscribers/{subscriberId}/notifications:
     get:
       summary: История уведомлений подписчика

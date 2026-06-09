@@ -51,6 +51,7 @@
 | `202 Accepted` | Новый запрос принят |
 | `200 OK` | Повтор идемпотентного запроса — возвращены существующие уведомления |
 | `422 Unprocessable Entity` | Ошибка валидации |
+| `429 Too Many Requests` | Превышен лимит уведомлений подписчику (см. раздел «Rate limit») |
 
 **Тело ответа**
 
@@ -162,6 +163,27 @@
 | `200 OK` | Статус обновлён, в `data` — актуальное уведомление |
 | `404 Not Found` | Уведомление не найдено |
 | `422 Unprocessable Entity` | Ошибка валидации |
+
+---
+
+## Rate limit
+
+На `POST /notifications/bulk` действует лимит **на подписчика** (`recipient_ids`):
+
+- отдельный счётчик для каждой пары `subscriber_id` + `channel` (`sms` / `email`);
+- окно — **1 час**;
+- лимит по умолчанию: **10 уведомлений/час** (`RATE_LIMIT_SUBSCRIBER_PER_HOUR` в `.env`);
+- счётчик в Redis через Laravel `RateLimiter` (`CACHE_STORE=redis`);
+- повтор идемпотентного запроса (`Idempotency-Key`) лимит не расходует.
+
+При превышении: **429 Too Many Requests**, заголовок `Retry-After`, в теле — `subscriber_ids` с превышением:
+
+```json
+{
+  "message": "Subscriber rate limit exceeded.",
+  "subscriber_ids": ["sub-001"]
+}
+```
 
 ---
 
