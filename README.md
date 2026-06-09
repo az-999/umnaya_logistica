@@ -207,6 +207,7 @@ docker compose run --rm --no-deps --entrypoint php notification-api artisan test
 ```bash
 curl -X POST http://localhost:8080/api/v1/notifications/bulk \
   -H "Content-Type: application/json" \
+  -H "X-Api-Key: change-me" \
   -H "Idempotency-Key: $(uuidgen)" \
   -d '{
     "channel": "sms",
@@ -219,7 +220,8 @@ curl -X POST http://localhost:8080/api/v1/notifications/bulk \
 ### Пример: история подписчика
 
 ```bash
-curl "http://localhost:8080/api/v1/subscribers/sub-001/notifications?status=sent"
+curl "http://localhost:8080/api/v1/subscribers/sub-001/notifications?status=sent" \
+  -H "X-Api-Key: change-me"
 ```
 
 ## Документация API
