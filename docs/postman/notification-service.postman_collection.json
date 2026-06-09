@@ -20,6 +20,10 @@
     {
       "key": "subscriber_id",
       "value": "sub-001"
+    },
+    {
+      "key": "api_key",
+      "value": "change-me"
     }
   ],
   "item": [
@@ -57,6 +61,10 @@
             "value": "application/json"
           },
           {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
+          },
+          {
             "key": "Idempotency-Key",
             "value": "{{idempotency_key}}"
           }
@@ -76,6 +84,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
           }
         ],
         "body": {
@@ -95,6 +107,10 @@
             "value": "application/json"
           },
           {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
+          },
+          {
             "key": "Idempotency-Key",
             "value": "{{idempotency_key}}"
           }
@@ -110,6 +126,12 @@
       "name": "Subscriber notifications history",
       "request": {
         "method": "GET",
+        "header": [
+          {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
+          }
+        ],
         "url": {
           "raw": "{{base_url}}/subscribers/{{subscriber_id}}/notifications?status=&channel=",
           "host": ["{{base_url}}"],
@@ -135,6 +157,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-Api-Key",
+            "value": "{{api_key}}"
           }
         ],
         "body": {

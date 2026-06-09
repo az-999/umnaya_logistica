@@ -7,6 +7,25 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    public const API_KEY = 'test-api-key';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withHeaders(['X-Api-Key' => self::API_KEY]);
+    }
+
+    protected function withoutApiKey(): static
+    {
+        $this->defaultHeaders = array_diff_key(
+            $this->defaultHeaders,
+            ['X-Api-Key' => true],
+        );
+
+        return $this;
+    }
+
     public function createApplication(): Application
     {
         $this->setTestingEnvironment();
@@ -20,6 +39,7 @@ abstract class TestCase extends BaseTestCase
             'database.connections.sqlite.database' => ':memory:',
             'cache.default' => 'array',
             'queue.default' => 'sync',
+            'api.key' => self::API_KEY,
         ]);
 
         return $app;
@@ -34,6 +54,7 @@ abstract class TestCase extends BaseTestCase
             'CACHE_STORE' => 'array',
             'QUEUE_CONNECTION' => 'sync',
             'SESSION_DRIVER' => 'array',
+            'API_KEY' => self::API_KEY,
         ];
 
         foreach ($vars as $key => $value) {

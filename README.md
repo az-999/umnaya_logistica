@@ -151,11 +151,14 @@ sequenceDiagram
 
 ```bash
 cp .env.example .env
+# Задайте API_KEY — фиксированный ключ для заголовка X-Api-Key
 # Сгенерируйте APP_KEY (или задайте вручную):
 # docker run --rm -v $(pwd)/services/notification:/app -w /app composer:2 php artisan key:generate --show
 
 docker compose up --build
 ```
+
+Все запросы к `/api/v1/*` требуют заголовок `X-Api-Key` со значением из `API_KEY` в `.env`.
 
 API: http://localhost:8080  
 RabbitMQ Management: http://localhost:15673 (guest/guest)  
