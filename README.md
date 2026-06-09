@@ -54,13 +54,6 @@ docker compose up --scale notification-worker=3
 - **API** — HTTP, миграции БД, запись уведомлений, идемпотентность (Redis), публикация marketing-задач в RabbitMQ, transactional-отправка через `dispatchSync` в том же процессе.
 - **Worker** — потребление очереди `notifications.marketing`, вызов mock-провайдеров, обновление статусов в PostgreSQL, retry при временных сбоях. HTTP не поднимает.
 
-**Приоритеты:**
-
-| Приоритет | Поведение в коде |
-|-----------|------------------|
-| `transactional` | `SendNotificationJob::dispatchSync()` — без RabbitMQ |
-| `marketing` | `SendNotificationJob::dispatch()->onQueue('notifications.marketing')` |
-
 **Структура репозитория:**
 
 ```
@@ -74,7 +67,25 @@ umnaya_logistica/
     └── Dockerfile        # multi-stage: base → api / worker
 ```
 
-Подробный план: [PLAN.md](PLAN.md).
+Описание API: [TZ.md](TZ.md#api-контракт-реализация).
+
+## Бизнес-логика приоритетов
+
+По ТЗ критичные сообщения (коды доступа, срочные изменения маршрутов) должны доставляться **без задержек** — вне общей очереди, обгоняя маркетинговые рассылки.
+
+В запросе `POST /api/v1/notifications/bulk` поле `priority` задаёт маршрут обработки:
+
+| Приоритет | По умолчанию | Поведение |
+|-----------|--------------|-----------|
+| `transactional` | нет | `SendNotificationJob::dispatchSync()` — отправка сразу в процессе API, RabbitMQ не используется |
+| `marketing` | **да** | `SendNotificationJob::dispatch()->onQueue('notifications.marketing')` — задача в durable-очередь RabbitMQ, обработка worker |
+
+Примеры:
+
+- SMS с кодом входа → `"priority": "transactional"`
+- Email-рассылка акций → `"priority": "marketing"` или поле можно не передавать
+
+Очередь `notifications.marketing` объявляется драйвером `laravel-queue-rabbitmq` с `queue_max_priority: 10` (задел под приоритизацию внутри marketing-потока).
 
 ## Надёжность и идемпотентность
 
