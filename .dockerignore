@@ -1,0 +1,4 @@
+services/notification/.env
+services/notification/node_modules
+services/notification/vendor
+.git

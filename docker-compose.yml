@@ -1,0 +1,91 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-notifications}
+      POSTGRES_USER: ${DB_USERNAME:-notifications}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "${POSTGRES_PUBLISHED_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-notifications} -d ${DB_DATABASE:-notifications}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - notification-net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PUBLISHED_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - notification-net
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "${RABBITMQ_PUBLISHED_PORT:-5673}:5672"
+      - "${RABBITMQ_MANAGEMENT_PUBLISHED_PORT:-15673}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - notification-net
+
+  notification-api:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      target: api
+    ports:
+      - "${API_PORT:-8080}:8080"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - notification-net
+
+  notification-worker:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+      target: worker
+    env_file:
+      - .env
+    depends_on:
+      notification-api:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - notification-net
+
+networks:
+  notification-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
