@@ -152,9 +152,12 @@ docker compose up --build
 ```
 
 API: http://localhost:8080  
-RabbitMQ Management: http://localhost:15673 (guest/guest)
+RabbitMQ Management: http://localhost:15673 (guest/guest)  
+pgAdmin (просмотр PostgreSQL): http://localhost:5050 (`admin@local.dev` / `admin`)
 
-Порты на хосте (если 5432/6379/5672 заняты): PostgreSQL `5433`, Redis `6380`, RabbitMQ `5673`.
+**Подключение к БД в pgAdmin:** Register → Server → Host `postgres`, Port `5432`, Database `notifications`, Username `notifications`, Password `secret`.
+
+Порты на хосте (если 5432/6379/5672 заняты): PostgreSQL `5433`, Redis `6380`, RabbitMQ `5673`, pgAdmin `5050`.
 
 ## Тесты
 
