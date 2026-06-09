@@ -67,7 +67,7 @@ umnaya_logistica/
     └── Dockerfile        # multi-stage: base → api / worker
 ```
 
-Описание API: [TZ.md](TZ.md#api-контракт-реализация).
+Описание API: [api.md](api.md).
 
 ## Бизнес-логика приоритетов
 
@@ -212,6 +212,7 @@ curl "http://localhost:8080/api/v1/subscribers/sub-001/notifications?status=sent
 
 ## Документация API
 
+- **Описание методов:** [api.md](api.md)
 - **OpenAPI (Swagger):** [docs/openapi.yaml](docs/openapi.yaml) — импорт в [Swagger Editor](https://editor.swagger.io/)
 - **Postman:** [docs/postman/notification-service.postman_collection.json](docs/postman/notification-service.postman_collection.json)
 
